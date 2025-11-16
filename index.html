@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacology (1) - Student List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a365d;
+            --secondary: #2d3748;
+            --accent: #2b6cb0;
+            --light: #f7fafc;
+            --dark: #1a202c;
+            --gold: #d4af37;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2.5rem 0;
+            box-shadow: var(--shadow);
+            margin-bottom: 2.5rem;
+            border-bottom: 4px solid var(--gold);
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.8rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            color: var(--gold);
+        }
+
+        .header-content h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .header-content p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        main {
+            flex: 1;
+            padding-bottom: 2rem;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 2.5rem;
+            justify-content: center;
+        }
+
+        .search-box {
+            flex-grow: 1;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px 14px 50px;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: white;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.2);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #718096;
+        }
+
+        .filter-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 10px 16px;
+            background: white;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: var(--secondary);
+            font-size: 1.1rem;
+        }
+
+        .filter-btn:hover {
+            background: #edf2f7;
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .student-list {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 3rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .student-list-header {
+            background: var(--primary);
+            color: white;
+            padding: 18px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .student-list-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .student-count {
+            background: var(--gold);
+            color: var(--dark);
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #edf2f7;
+        }
+
+        th {
+            padding: 16px 25px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+            color: var(--primary);
+            font-size: 1.05rem;
+        }
+
+        td {
+            padding: 16px 25px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 1rem;
+        }
+
+        tr:hover {
+            background: #f7fafc;
+        }
+
+        .student-id {
+            font-weight: 600;
+            color: var(--accent);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .student-name {
+            text-align: right;
+            direction: rtl;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .no-results {
+            padding: 50px 20px;
+            text-align: center;
+            color: #718096;
+        }
+
+        .no-results i {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: #cbd5e0;
+        }
+
+        .no-results h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-content h1 {
+                font-size: 1.8rem;
+            }
+            
+            .logo {
+                font-size: 2.2rem;
+            }
+            
+            th, td {
+                padding: 14px 15px;
+            }
+            
+            table {
+                font-size: 0.95rem;
+            }
+            
+            .student-list-header {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .search-box {
+                max-width: 100%;
+            }
+            
+            .filter-buttons {
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Faculty of Dentistry</span>
+                </div>
+                <h1>Pharmacology (1) - Student List</h1>
+                <p>Section 10 Participants</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search by student name or ID...">
+            </div>
+            
+            <div class="filter-section">
+                <div class="filter-label">Filter by first letter:</div>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="أ">أ</button>
+                    <button class="filter-btn" data-filter="إ">إ</button>
+                    <button class="filter-btn" data-filter="ب">ب</button>
+                    <button class="filter-btn" data-filter="ت">ت</button>
+                    <button class="filter-btn" data-filter="ث">ث</button>
+                    <button class="filter-btn" data-filter="ج">ج</button>
+                    <button class="filter-btn" data-filter="ح">ح</button>
+                    <button class="filter-btn" data-filter="خ">خ</button>
+                    <button class="filter-btn" data-filter="د">د</button>
+                    <button class="filter-btn" data-filter="ذ">ذ</button>
+                    <button class="filter-btn" data-filter="ر">ر</button>
+                    <button class="filter-btn" data-filter="ز">ز</button>
+                    <button class="filter-btn" data-filter="س">س</button>
+                    <button class="filter-btn" data-filter="ش">ش</button>
+                    <button class="filter-btn" data-filter="ص">ص</button>
+                    <button class="filter-btn" data-filter="ض">ض</button>
+                    <button class="filter-btn" data-filter="ط">ط</button>
+                    <button class="filter-btn" data-filter="ظ">ظ</button>
+                    <button class="filter-btn" data-filter="ع">ع</button>
+                    <button class="filter-btn" data-filter="غ">غ</button>
+                    <button class="filter-btn" data-filter="ف">ف</button>
+                    <button class="filter-btn" data-filter="ق">ق</button>
+                    <button class="filter-btn" data-filter="ك">ك</button>
+                    <button class="filter-btn" data-filter="ل">ل</button>
+                    <button class="filter-btn" data-filter="م">م</button>
+                    <button class="filter-btn" data-filter="ن">ن</button>
+                    <button class="filter-btn" data-filter="ه">ه</button>
+                    <button class="filter-btn" data-filter="و">و</button>
+                    <button class="filter-btn" data-filter="ي">ي</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="student-list">
+            <div class="student-list-header">
+                <h2>Student Directory</h2>
+                <div class="student-count">
+                    <span id="studentCount">33</span> Students
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table id="studentsTable">
+                    <thead>
+                        <tr>
+                            <th width="10%">#</th>
+                            <th width="25%">Student ID</th>
+                            <th width="65%">Student Name</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                        <!-- Students will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Student data from the image
+        const students = [
+            { id: "202301211", name: "أبرار علواني السيد محمود أحمد" },
+            { id: "202301371", name: "إبراهيم حمدي عبدالمنعم جاد سعيد" },
+            { id: "202301133", name: "أحمد عبدالوهاب أحمد عبدالرهاب عوض" },
+            { id: "202301453", name: "أحمد محمد أحمد أبراهيم سليمان" },
+            { id: "202301209", name: "أحمد محمد الشريبي علي سيد أحمد" },
+            { id: "202301239", name: "أحمد محمد علي حسين عشرى" },
+            { id: "202301480", name: "إشراقة علي إبراهيم أبو علي" },
+            { id: "202301225", name: "أشرقت موسى فرج موسى" },
+            { id: "202301375", name: "أمنية عيد محمد عبدالرحمن مصطفى" },
+            { id: "202305477", name: "أمين محمد أمين أمين" },
+            { id: "202301141", name: "جنة محمد موسى سالم" },
+            { id: "202301360", name: "جنى نسيم حسانين حسن حسانين رخا" },
+            { id: "202301401", name: "حسني محمد حسني محمد الباز" },
+            { id: "202202087", name: "سلمان أحمد سلام أحمد الرش" },
+            { id: "202305704", name: "عبدالرحمن محمد فتحي صالح الكاشف" },
+            { id: "202301533", name: "عبدالله خالد سلامة علي عميرة" },
+            { id: "202301413", name: "علي مدحت عثمان المشد" },
+            { id: "202301459", name: "عمار ياسر أحمد مصطفى أبو العلا" },
+            { id: "202301322", name: "عمرو صلاح محمد علي" },
+            { id: "202301290", name: "عمرو عاطف أحمد تمراز" },
+            { id: "202301511", name: "فارس فوزى إسماعيل الديدامونى" },
+            { id: "202305294", name: "فارس محمد عبد الله هبد العظيم محمد صالح" },
+            { id: "202301341", name: "مجدي رمضان السيد علي العفيفي" },
+            { id: "202301168", name: "محمد السيد رياض فرحات بدران" },
+            { id: "202301202", name: "محمد إيهاب محمد السيد كريم" },
+            { id: "202305708", name: "محمد رضا معوض حسين رضوان" },
+            { id: "202301298", name: "محمد سعد الصافي أبو نعمه" },
+            { id: "202301117", name: "محمد علي محمد علي الجمال" },
+            { id: "202301240", name: "محمد مصطفى أحمد مصطفى" },
+            { id: "202301532", name: "محمود حمادة سعيد محمد إبراهيم" },
+            { id: "202302859", name: "ميرنا ميخائيل نجيب إبراهيم" },
+            { id: "202301152", name: "نعيم فاروق نعيم عبد السلام" },
+            { id: "202305492", name: "هند محمد السيد السيد إبراهيم" }
+        ];
+
+        // DOM elements
+        const studentsTableBody = document.getElementById('studentsTableBody');
+        const searchInput = document.getElementById('searchInput');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const studentCount = document.getElementById('studentCount');
+
+        // Initialize the table
+        function renderStudents(studentsToRender) {
+            studentsTableBody.innerHTML = '';
+            
+            if (studentsToRender.length === 0) {
+                studentsTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="3">
+                            <div class="no-results">
+                                <i class="fas fa-search"></i>
+                                <h3>No students found</h3>
+                                <p>Try adjusting your search or filter criteria</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                studentCount.textContent = '0';
+                return;
+            }
+            
+            studentCount.textContent = studentsToRender.length;
+            
+            studentsToRender.forEach((student, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td class="student-id">${student.id}</td>
+                    <td class="student-name">${student.name}</td>
+                `;
+                studentsTableBody.appendChild(row);
+            });
+        }
+
+        // Filter and search functionality
+        function filterStudents() {
+            const searchTerm = searchInput.value.trim();
+            const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+            
+            let filteredStudents = students.filter(student => {
+                const matchesSearch = student.name.includes(searchTerm) || 
+                                     student.id.includes(searchTerm);
+                
+                let matchesFilter = true;
+                if (activeFilter !== 'all') {
+                    // Check if the student name starts with the filter letter
+                    matchesFilter = student.name.startsWith(activeFilter);
+                }
+                
+                return matchesSearch && matchesFilter;
+            });
+            
+            renderStudents(filteredStudents);
+        }
+
+        // Event listeners
+        searchInput.addEventListener('input', filterStudents);
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                filterStudents();
+            });
+        });
+
+        // Initial render
+        renderStudents(students);
+    </script>
+</body>
+</html>
